@@ -40,9 +40,10 @@ cadence-lint -f "./contracts/**/*.cdc"
 
 ### Options
 
+<!-- prettier-ignore -->
 | Option       | Abbr. | Default       | Description                                                                           |
 | ------------ | ----- | ------------- | ------------------------------------------------------------------------------------- |
-| --files      | -f    | "./\*_/_.cdc" | Comman separated file glob, based on [fast-glob](https://github.com/mrmlnc/fast-glob) |
+| --files      | -f    | "./**/*.cdc" | Comman separated file glob, based on [fast-glob](https://github.com/mrmlnc/fast-glob) |
 | --configPath | -p    | "./flow.json" | Path to flow.json                                                                     |
 | --strict     | -s    | -             | Flag that causes the linter to fail when warnings are detected                        |
 | --help       | -h    | -             | Display usage info                                                                    |
