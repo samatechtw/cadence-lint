@@ -9,7 +9,7 @@ const pkg = require('./package.json')
 
 export default [
   {
-    input: 'dist/index.js',
+    input: 'dist/src/index.js',
     output: [
       {
         exports: 'named',
