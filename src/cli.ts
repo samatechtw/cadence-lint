@@ -16,6 +16,8 @@ interface CadenceLinterCliArguments {
 export class CadenceLinterCli {
   async run() {
     const argv = yargs(process.argv.slice(2))
+      .version(false)
+      .usage('\n$0 <options>')
       .options({
         s: {
           type: 'boolean',
@@ -37,9 +39,7 @@ export class CadenceLinterCli {
         },
         h: { type: 'boolean', alias: 'help', default: false },
         v: { type: 'boolean', alias: 'version', default: false },
-      })
-      .usage('\n$0 <options>')
-      .version(false).argv as CadenceLinterCliArguments
+      }).argv as CadenceLinterCliArguments
 
     const contractsGlob = argv.c
     const configPath = argv.p
