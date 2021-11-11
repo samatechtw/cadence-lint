@@ -50,6 +50,7 @@ export class CadenceLinterCli {
       await linter.fileDiagnostics(contracts)
       const success = linter.logResult()
       linter.close(success)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (typeof e === 'string' || e.message) {
         console.log(chalk.red(e.message || e))

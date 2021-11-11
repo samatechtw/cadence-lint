@@ -19,7 +19,7 @@ import {
 import { DiagnosticSeverity } from 'vscode-languageserver-types'
 import { runLanguageServer } from './language-server'
 
-const noop = () => {}
+const noop = () => ({})
 
 const defaultLogger = {
   log: noop,
@@ -55,14 +55,14 @@ export class CadenceLinter {
       configPath: this.configPath,
       output: 'json',
     })
-    if (!server) {
+    if (!server || !server.stdout || !server.stdin) {
       throw new Error('Failed to start language server')
     }
     this.server = server
 
     this.clientConnection = createProtocolConnection(
-      new StreamMessageReader(server?.stdout!),
-      new StreamMessageWriter(server?.stdin!),
+      new StreamMessageReader(server.stdout),
+      new StreamMessageWriter(server.stdin),
       this.logger,
     )
     // serverConnection.listen()

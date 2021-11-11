@@ -18,6 +18,7 @@ export async function runLanguageServer(
 
   const child = spawn('flow', argList)
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     child.on('error', (e: any) => {
       if (e.code === 'ENOENT') {
         reject(new Error('Flow CLI must be installed'))
