@@ -1,0 +1,39 @@
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Node module dependencies
+node_modules/
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Other IDEs
+.project
+.classpath
+.c9
+*.launch
+.settings
+*.sublime-workspace
+
+# misc
+coverage/
+npm-debug.log
+yarn-error.log
+typings/
+
+# Non-npm lock files
+yarn.lock
+pnpm-lock.yaml
+
+# Environment file
+.env
+
+# Build files
+dist/
+bin/
