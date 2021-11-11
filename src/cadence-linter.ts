@@ -35,6 +35,25 @@ export interface CadenceLinterOptions {
   configPath: string
 }
 
+// Helper for multiple runner workaround
+export function logLinterResult(
+  warningCount: number,
+  errorCount: number,
+  strict: boolean,
+): boolean {
+  console.log(`\nResult: ${errorCount} errors and ${warningCount} warnings`)
+  let success = errorCount === 0
+  if (strict) {
+    success = success && warningCount === 0
+  }
+  if (success) {
+    console.log(chalk.green('SUCCESS\n'))
+  } else {
+    console.log(chalk.red('FAIL\n'))
+  }
+  return success
+}
+
 export class CadenceLinter {
   errorCount = 0
   warningCount = 0
@@ -169,22 +188,11 @@ export class CadenceLinter {
   }
 
   logResult(): boolean {
-    console.log(`\nResult: ${this.errorCount} errors and ${this.warningCount} warnings`)
-    let success = this.errorCount === 0
-    if (this.strict) {
-      success = success && this.warningCount === 0
-    }
-    if (success) {
-      console.log(chalk.green('SUCCESS\n'))
-    } else {
-      console.log(chalk.red('FAIL\n'))
-    }
-    return success
+    return logLinterResult(this.warningCount, this.errorCount, this.strict)
   }
 
-  close(success: boolean) {
+  close() {
     this.clientConnection.end()
     this.server.kill()
-    process.exit(success ? 0 : 1)
   }
 }

@@ -2,12 +2,12 @@ import chalk from 'chalk'
 import fg from 'fast-glob'
 import path from 'path'
 import yargs from 'yargs'
-import { CadenceLinter } from './cadence-linter'
+import { CadenceLinter, logLinterResult } from './cadence-linter'
 import pkg from '../package.json'
 
 interface CadenceLinterCliArguments {
   s: boolean
-  c: string
+  f: string
   p: string
   h: boolean
   v: boolean
@@ -25,11 +25,12 @@ export class CadenceLinterCli {
           alias: 'strict',
           description: 'Fail on warnings',
         },
-        c: {
+        f: {
           type: 'string',
           default: './**/*.cdc',
-          alias: 'contracts',
-          description: 'Contracts glob. Defaults to "./**/*.cdc". Uses fast-glob.',
+          alias: 'files',
+          description:
+            'Defaults to "./**/*.cdc". Comma separated globs are parse separately. Uses fast-glob.',
         },
         p: {
           type: 'string',
@@ -41,7 +42,7 @@ export class CadenceLinterCli {
         v: { type: 'boolean', alias: 'version', default: false },
       }).argv as CadenceLinterCliArguments
 
-    const contractsGlob = argv.c
+    const fileGlobs = argv.f
     const configPath = argv.p
     const strict = argv.s
 
@@ -54,15 +55,25 @@ export class CadenceLinterCli {
       process.exit(0)
     }
     try {
-      const contracts = await fg(contractsGlob)
-      const linter = new CadenceLinter({
-        strict,
-        configPath,
-      })
-      await linter.init()
-      await linter.fileDiagnostics(contracts)
-      const success = linter.logResult()
-      linter.close(success)
+      // TODO -- this is a hack for working around an issue where imports fail.
+      // Maybe we need to communicate the root directory to the language server?
+      // Multiple linters/language servers is probably fine, but a little slow
+      let warningCount = 0
+      let errorCount = 0
+      for (const fileGlob of fileGlobs.split(',')) {
+        const linter = new CadenceLinter({
+          strict,
+          configPath,
+        })
+        await linter.init()
+        console.log('Running diagnostics on', fileGlob)
+        const files = await fg(fileGlob)
+        await linter.fileDiagnostics(files)
+        linter.close()
+        warningCount += linter.warningCount
+        errorCount += linter.errorCount
+      }
+      logLinterResult(warningCount, errorCount, strict)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (typeof e === 'string' || e.message) {

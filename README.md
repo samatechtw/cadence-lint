@@ -12,7 +12,7 @@
 
 ## Description
 
-A command line linter for [Cadence](https://docs.onflow.org/cadence/language/) (Flow smart contract language). It uses the [Flow CLI](https://github.com/onflow/flow-cli) to start a language server, and passes contracts described via glob pattern.
+A command line linter for [Cadence](https://docs.onflow.org/cadence/language/) (Flow smart contract language). It uses the [Flow CLI](https://github.com/onflow/flow-cli) to start a language server, and passes Cadence files described via glob pattern.
 
 ## Usage
 
@@ -35,15 +35,15 @@ npm i -D @samatech/cadence-lint
 Basic usage
 
 ```bash
-cadence-lint -c "./contracts/**/*.cdc"
+cadence-lint -f "./contracts/**/*.cdc"
 ```
 
 ### Options
 
-| Option       | Abbr. | Default       | Description                                                               |
-| ------------ | ----- | ------------- | ------------------------------------------------------------------------- |
-| --contracts  | -c    | "./\*_/_.cdc" | Contracts glob, based on [fast-glob](https://github.com/mrmlnc/fast-glob) |
-| --configPath | -p    | "./flow.json" | Path to flow.json                                                         |
-| --strict     | -s    | -             | Flag that causes the linter to fail when warnings are detected            |
-| --help       | -h    | -             | Display usage info                                                        |
-| --version    | -v    | -             | Display version info                                                      |
+| Option       | Abbr. | Default       | Description                                                                           |
+| ------------ | ----- | ------------- | ------------------------------------------------------------------------------------- |
+| --files      | -f    | "./\*_/_.cdc" | Comman separated file glob, based on [fast-glob](https://github.com/mrmlnc/fast-glob) |
+| --configPath | -p    | "./flow.json" | Path to flow.json                                                                     |
+| --strict     | -s    | -             | Flag that causes the linter to fail when warnings are detected                        |
+| --help       | -h    | -             | Display usage info                                                                    |
+| --version    | -v    | -             | Display version info                                                                  |
