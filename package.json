@@ -1,6 +1,6 @@
 {
   "name": "@samatech/cadence-lint",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CLI linter for Cadence projects",
   "main": "bin/cadence-lint.js",
   "module": "dist/cadence-lint.mjs",
@@ -19,7 +19,7 @@
     "build": "rimraf dist && rimraf bin && mkdir bin && tsc && rollup -c rollup.config.js",
     "build:test": "npm run build && jest",
     "bundle": "rollup -c rollup.config.js",
-    "test": "jest",
+    "test": "jest --runInBand",
     "release": "npx git-ensure -a && npx bumpp --commit --tag --push"
   },
   "repository": {

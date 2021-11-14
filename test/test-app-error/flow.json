@@ -13,13 +13,13 @@
   },
   "contracts": {
     "FUSD": {
-      "source": "./test/test-app/contracts/FUSD.cdc",
+      "source": "./contracts/FUSD.cdc",
       "aliases": {
         "testnet": "0xe223d8a629e49c68"
       }
     },
     "FungibleToken": {
-      "source": "./test/test-app/contracts/FungibleToken.cdc",
+      "source": "./contracts/FungibleToken.cdc",
       "aliases": {
         "emulator": "0xf8d6e0586b0a20c7",
         "testnet": "0x631e88ae7f1d7c20"

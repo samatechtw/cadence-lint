@@ -45,6 +45,7 @@ cadence-lint -f "./contracts/**/*.cdc"
 | ------------ | ----- | ------------- | ------------------------------------------------------------------------------------- |
 | --files      | -f    | "./**/*.cdc" | Comman separated file glob, based on [fast-glob](https://github.com/mrmlnc/fast-glob) |
 | --configPath | -p    | "./flow.json" | Path to flow.json                                                                     |
-| --strict     | -s    | -             | Flag that causes the linter to fail when warnings are detected                        |
+| --failOnWarning     | --failOnWarning    | -             | Flag that causes the linter to fail when warnings are detected                        |
+| --failOnHint     | --failOnHint    | -             | Flag that causes the linter to fail when hints are detected                        |
 | --help       | -h    | -             | Display usage info                                                                    |
 | --version    | -v    | -             | Display version info                                                                  |

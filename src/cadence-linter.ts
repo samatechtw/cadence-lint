@@ -31,20 +31,31 @@ const defaultLogger = {
 
 export interface CadenceLinterOptions {
   logger?: Logger
-  strict: boolean
+  failOnWarning: boolean
+  failOnHint: boolean
   configPath: string
 }
 
+export interface CadenceLinterResult {
+  warningCount: number
+  errorCount: number
+  hintCount: number
+  failOnWarning: boolean
+  failOnHint: boolean
+}
+
 // Helper for multiple runner workaround
-export function logLinterResult(
-  warningCount: number,
-  errorCount: number,
-  strict: boolean,
-): boolean {
-  console.log(`\nResult: ${errorCount} errors and ${warningCount} warnings`)
+export function logLinterResult(result: CadenceLinterResult): boolean {
+  const { warningCount, errorCount, hintCount, failOnWarning, failOnHint } = result
+  console.log(
+    `\nResult: ${errorCount} errors, ${warningCount} warnings, and ${hintCount} hints`,
+  )
   let success = errorCount === 0
-  if (strict) {
+  if (failOnWarning) {
     success = success && warningCount === 0
+  }
+  if (failOnHint) {
+    success = success && hintCount === 1
   }
   if (success) {
     console.log(chalk.green('SUCCESS\n'))
@@ -57,16 +68,19 @@ export function logLinterResult(
 export class CadenceLinter {
   errorCount = 0
   warningCount = 0
+  hintCount = 0
   server!: ChildProcess
   logger: Logger
   configPath: string
-  strict: boolean
+  failOnWarning: boolean
+  failOnHint: boolean
   clientConnection!: ProtocolConnection
 
   constructor(options: CadenceLinterOptions) {
     this.logger = options.logger ?? defaultLogger
     this.configPath = options.configPath
-    this.strict = options.strict
+    this.failOnWarning = options.failOnWarning
+    this.failOnHint = options.failOnHint
   }
 
   async init() {
@@ -100,7 +114,8 @@ export class CadenceLinter {
     })
 
     const init: InitializeParams = {
-      rootUri: path.resolve(__dirname),
+      rootUri: process.cwd(),
+      workspaceFolders: [{ uri: process.cwd(), name: '' }],
       processId: 1,
       initializationOptions: {
         accessCheckMode: false,
@@ -123,7 +138,6 @@ export class CadenceLinter {
           },
         },
       },
-      workspaceFolders: null,
     }
     await this.clientConnection.sendRequest(InitializeRequest.type, init)
   }
@@ -151,8 +165,9 @@ export class CadenceLinter {
         case DiagnosticSeverity.Warning:
           this.warningCount += 1
           return chalk.yellow('warning:')
-        case DiagnosticSeverity.Information:
         case DiagnosticSeverity.Hint:
+          this.hintCount += 1
+        case DiagnosticSeverity.Information:
         default:
           return chalk.grey('')
       }
@@ -188,11 +203,24 @@ export class CadenceLinter {
   }
 
   logResult(): boolean {
-    return logLinterResult(this.warningCount, this.errorCount, this.strict)
+    return logLinterResult({
+      warningCount: this.warningCount,
+      errorCount: this.errorCount,
+      hintCount: this.hintCount,
+      failOnWarning: this.failOnWarning,
+      failOnHint: this.failOnHint,
+    })
   }
 
-  close() {
-    this.clientConnection.end()
-    this.server.kill()
+  async close() {
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        this.clientConnection.onClose(() => {
+          this.server.kill()
+          resolve()
+        })
+        this.clientConnection.end()
+      }, 500)
+    })
   }
 }
